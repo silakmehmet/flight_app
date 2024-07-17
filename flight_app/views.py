@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import FlightSerializer, ReservationSerializer, PassengerSerializer
+from .serializers import FlightSerializer, ReservationSerializer, PassengerSerializer, StaffFlightSerializer
 from .models import Flight, Reservation, Passenger
 from .permissions import IsAdminOrReadOnly
 
@@ -10,6 +10,12 @@ class FlightMVS(ModelViewSet):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.request.user.is_staff:
+            return StaffFlightSerializer
+
+        return super().get_serializer_class()
 
 
 class ReservationMVS(ModelViewSet):

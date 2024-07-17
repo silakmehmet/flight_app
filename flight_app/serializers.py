@@ -41,3 +41,12 @@ class ReservationSerializer(serializers.ModelSerializer):
 
         reservation.save()
         return reservation
+
+
+class StaffFlightSerializer(serializers.ModelSerializer):
+    flight = ReservationSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Flight
+        fields = "__all__"
+        read_only_fields = ["id", "flight"]

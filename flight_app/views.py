@@ -1,4 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import FlightSerializer, ReservationSerializer, PassengerSerializer
 from .models import Flight, Reservation, Passenger
@@ -14,6 +15,14 @@ class FlightMVS(ModelViewSet):
 class ReservationMVS(ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.is_staff:
+            return queryset
+
+        return queryset.filter(user=self.request.user)
 
 
 class PassengerMVS(ModelViewSet):

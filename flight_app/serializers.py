@@ -28,3 +28,16 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     def get_flight_number(self, obj):
         return obj.flight.flight_number
+
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        passengers_data = validated_data.pop("passenger")
+        reservation = Reservation.objects.create(**validated_data)
+
+        for passenger_data in passengers_data:
+            passenger = Passenger.objects.cretae(**passenger_data)
+
+            reservation.passenger.add(passenger)
+
+        reservation.save()
+        return reservation

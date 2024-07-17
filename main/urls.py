@@ -19,6 +19,8 @@ schema_view = get_schema_view(
 )
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("users/", include("users.urls")),
+
     # Url paths for swagger:
     path("swagger(<format>\.json|\.yaml)",
          schema_view.without_ui(cache_timeout=0), name="schema-json"),
@@ -26,5 +28,7 @@ urlpatterns = [
          name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc",
          cache_timeout=0), name="schema-redoc"),
+
+    # debug-toolbar
     path(' debug/', include('debug_toolbar.urls')),
 ]

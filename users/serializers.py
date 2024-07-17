@@ -12,11 +12,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only=True, required=True, validators=[validate_password])
     email = serializers.EmailField(required=True, validators=[
                                    UniqueValidator(queryset=User.objects.all())])
+    token = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "email", "username", "password", "password2"]
-        read_only_fields = ["id"]
+        fields = ["id", "email", "username", "password", "password2", "token"]
+        read_only_fields = ["id", "token"]
 
     def validate(self, data):
         if data["password"] != data["password2"]:
@@ -33,3 +34,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+
+    def get_token(self, obj):
+        return obj.auth_token.key
